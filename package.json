@@ -1,0 +1,54 @@
+{
+  "name": "vue-html5plus",
+  "version": "1.0.0",
+  "description": "一个基于html5plus标准的vuejs原生拓展插件！",
+  "main": "lib/vue-html5plus.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "lint": "eslint --ext .js,.vue src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhaomenghuan/vue-html5plus.git"
+  },
+  "keywords": [
+    "vue",
+    "html5plus"
+  ],
+  "author": "zhaomenghuan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zhaomenghuan/vue-html5plus/issues"
+  },
+  "homepage": "https://github.com/zhaomenghuan/vue-html5plus#readme",
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.5.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "cross-env": "^5.0.0",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-html": "^2.0.3",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "html-webpack-plugin": "^2.28.0",
+    "vue": "^2.3.3",
+    "vue-loader": "^12.2.1",
+    "vue-router": "^2.5.3",
+    "vue-template-compiler": "^2.3.3",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5"
+  },
+  "dependencies": {
+    "vue-touch": "^2.0.0-beta.4"
+  }
+}
