@@ -184,7 +184,7 @@ const ajax = function(url, options) {
 
     xhr.onreadystatechange = function() {
         if(xhr.readyState === 4) {
-            xhr.onreadystatechange = __noop;
+            xhr.onreadystatechange = _noop;
             clearTimeout(abortTimeout);
             var result, error = false;
             var isLocal = protocol === 'file:';
