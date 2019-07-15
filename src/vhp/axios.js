@@ -198,7 +198,7 @@ const ajax = function(url, options) {
                     } else if(dataType === 'xml') {
                         result = xhr.responseXML;
                     } else if(dataType === 'json') {
-                        result = blankRE.test(result) ? null : parseJSON(result);
+                        result = blankRE.test(result) ? null : JSON.parse(result);
                     }
                 } catch(e) {
                     error = e;
