@@ -10,8 +10,6 @@ import VueTouch from 'vue-touch'
 
 import _ from './utils'
 
-let currentWebview = null
-
 const VueHtml5Plus = {}
 VueHtml5Plus.install = (Vue) => {
   Vue.mixin({
@@ -19,7 +17,7 @@ VueHtml5Plus.install = (Vue) => {
       if (os.plus) {
         let _options = this.$options
         evt.plusReady(function () {
-            currentWebview = plus.webview.currentWebview();
+          this.$currentWebview = plus.webview.currentWebview();
           if (_.isFunction(_options.plusReady)) {
             _options.plusReady.call(this)
           }
@@ -28,6 +26,7 @@ VueHtml5Plus.install = (Vue) => {
               _options.listenNetwork.call(this)
             })
           }
+          plus.key.addEventListener('backbutton', this.$back, false);
         }.bind(this))
       }
     }
@@ -43,7 +42,6 @@ VueHtml5Plus.install = (Vue) => {
 
   Vue.prototype.$axios = axios
 
-  Vue.prototype.$currentWebview = currentWebview
   Object.keys(webview).forEach(v => Vue.prototype[`$${v}`] = webview[v])
 }
 

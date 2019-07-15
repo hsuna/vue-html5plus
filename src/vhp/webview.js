@@ -26,13 +26,8 @@ const WINDOW_OPTIONS = {
 }
 /** 默认配置 */
 const DEFAULT_OPTIONS = {
-	swipeBack: false,
 	preloadPages: [], //5+ lazyLoad webview
 	preloadLimit: 10, //预加载窗口的数量限制(一旦超出，先进先出)
-	keyEventBind: {
-		backbutton: true,
-		menubutton: true
-	},
 	titleConfig: {
 		height: "44px",
 		backgroundColor: "#f7f7f7", //导航栏背景色
@@ -121,13 +116,15 @@ const fire = (webview, eventType, data) => {
 		if(typeof data === 'undefined') {
 			data = '';
 		} else if(typeof data === 'boolean' || typeof data === 'number') {
-			webview.evalJS("typeof Vue.prototype.$receive!=='undefined'&&Vue.prototype.$receive('" + eventType + "'," + data + ")");
+			webview.evalJS(`window.Vue && Vue.prototype.$receive("${eventType}", "${data}");`);
+			webview.evalJS(`window.mui && mui.receive("${eventType}", "${data}");`);
 			return;
 		} else if(_.isPlainObject(data) || _.isArray()) {
 			data = JSON.stringify(data || {}).replace(/\'/g, "\\u0027").replace(/\\/g, "\\u005c");
 		}
-		webview.evalJS("typeof Vue.prototype.$receive!=='undefined'&&Vue.prototype.$receive('" + eventType + "','" + data + "')");
-	}
+		webview.evalJS(`window.Vue && Vue.prototype.$receive("${eventType}", "${data}");`);
+		webview.evalJS(`window.mui && mui.receive("${eventType}", "${data}");`);
+	}s
 };
 
 /*
@@ -397,7 +394,8 @@ const openWindowWithTitle = function(options={}, titleConfig) {
 					if( _back.click && _.isFunction(_back.click)){
 						_back.click();
 					}else{
-						webview.evalJS("window.mui&&mui.back();");
+						webview.evalJS(`window.Vue && Vue.prototype.$back();`);
+						webview.evalJS(`window.mui && mui.back();`);
 					}
 				}
 			}, false);
@@ -609,7 +607,8 @@ const back = function() {
 	var wobj = plus.webview.currentWebview();
 	var parent = wobj.parent();
 	if (parent) {
-		parent.evalJS('Vue.prototype.$back && Vue.prototype.$back();');
+		parent.evalJS('window.Vue && Vue.prototype.$back();');
+		parent.evalJS('window.mui && mui.back();');
 	} else {
 		wobj.canBack(function(e) {
 			//by chb 暂时注释，在碰到类似popover之类的锚点的时候，需多次点击才能返回；
