@@ -124,7 +124,7 @@ const fire = (webview, eventType, data) => {
 		}
 		webview.evalJS(`window.Vue && Vue.prototype.$receive("${eventType}", "${data}");`);
 		webview.evalJS(`window.mui && mui.receive("${eventType}", "${data}");`);
-	}s
+	}
 };
 
 /*
