@@ -6,7 +6,8 @@ import networkinfo from './vhp/networkinfo'
 import axios from './vhp/axios'
 import webview from './vhp/webview'
 
-import VueTouch from 'vue-touch'
+/** 添加移动事件 */
+import 'tocca'
 
 import _ from './utils'
 
@@ -26,12 +27,11 @@ VueHtml5Plus.install = (Vue) => {
               _options.listenNetwork.call(this)
             })
           }
-          plus.key.addEventListener('backbutton', this.$back, false);
         }.bind(this))
       }
     }
   })
-  Vue.use(VueTouch, {name: 'v-touch'})
+  //Vue.directive('touch', Touch(Vue))
 
   Vue.prototype.$plusReady = evt.plusReady
   Vue.prototype.$os = os
@@ -44,6 +44,11 @@ VueHtml5Plus.install = (Vue) => {
 
   Object.keys(webview).forEach(v => Vue.prototype[`$${v}`] = webview[v])
 }
+
+/** 监听返回键  */
+evt.plusReady(function(){
+  plus.key.addEventListener('backbutton', webview.back, false);
+})
 
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(VueHtml5Plus)

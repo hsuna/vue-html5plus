@@ -620,13 +620,13 @@ const back = function() {
 					//首页不存在opener的情况下，后退实际上应该是退出应用；
 					//首次按键，提示‘再按一次退出应用’
 					if (!__back__first) {
-						__back__first = new Date().getTime();
+						__back__first = Date.now();
 						nativeUI.toast('再按一次退出应用');
 						setTimeout(function() {
 							__back__first = null;
 						}, 2000);
 					} else {
-						if (new Date().getTime() - __back__first < 2000) {
+						if (Date.now() - __back__first < 2000) {
 							plus.runtime.quit();
 						}
 					}

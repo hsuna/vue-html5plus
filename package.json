@@ -10,18 +10,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zhaomenghuan/vue-html5plus.git"
+    "url": "git+https://github.com/hsuna/vue-html5plus.git"
   },
   "keywords": [
     "vue",
     "html5plus"
   ],
-  "author": "zhaomenghuan",
+  "author": "hsuna",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zhaomenghuan/vue-html5plus/issues"
+    "url": "https://github.com/hsuna/vue-html5plus/issues"
   },
-  "homepage": "https://github.com/zhaomenghuan/vue-html5plus#readme",
+  "homepage": "https://github.com/hsuna/vue-html5plus#readme",
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
@@ -49,6 +49,6 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
-    "vue-touch": "^2.0.0-beta.4"
+    "tocca": "^2.0.4"
   }
 }
