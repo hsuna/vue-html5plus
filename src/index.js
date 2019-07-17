@@ -16,6 +16,7 @@ VueHtml5Plus.install = (Vue) => {
   Vue.mixin({
     beforeCreate () {
       if (os.plus) {
+        let self = this
         let _options = this.$options
         evt.plusReady(function () {
           this.$currentWebview = plus.webview.currentWebview();
@@ -25,8 +26,15 @@ VueHtml5Plus.install = (Vue) => {
           if (_.isFunction(_options.listenNetwork)) {
             evt.listenNetwork(function () {
               _options.listenNetwork.call(this)
+              this.$back.bind(this)
             })
           }
+          this.$back = function(){
+            if(_.isFunction(_options.beforeBack) && _options.beforeBack.call(self)) return;
+            webview.back.call(self)
+          }
+          /** 监听返回键  */
+          plus.key.addEventListener('backbutton', this.$back, false);
         }.bind(this))
       }
     }
@@ -44,11 +52,6 @@ VueHtml5Plus.install = (Vue) => {
 
   Object.keys(webview).forEach(v => Vue.prototype[`$${v}`] = webview[v])
 }
-
-/** 监听返回键  */
-evt.plusReady(function(){
-  plus.key.addEventListener('backbutton', webview.back, false);
-})
 
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(VueHtml5Plus)
