@@ -117,13 +117,11 @@ const fire = (webview, eventType, data) => {
 			data = '';
 		} else if(typeof data === 'boolean' || typeof data === 'number') {
 			webview.evalJS(`window.Vue && Vue.prototype.$receive("${eventType}", "${data}");`);
-			webview.evalJS(`window.mui && mui.receive("${eventType}", "${data}");`);
 			return;
 		} else if(_.isPlainObject(data) || _.isArray()) {
 			data = JSON.stringify(data || {}).replace(/\'/g, "\\u0027").replace(/\\/g, "\\u005c");
 		}
 		webview.evalJS(`window.Vue && Vue.prototype.$receive("${eventType}", "${data}");`);
-		webview.evalJS(`window.mui && mui.receive("${eventType}", "${data}");`);
 	}
 };
 
@@ -264,157 +262,6 @@ const createWindow = (options, isCreate) => {
 					webview.append(subWebview);
 				});
 			}
-		}
-	}
-	return webview;
-}
-
-const openWindowWithTitle = function(options={}, titleConfig) {
-	const url = options.url;
-	const id = options.id || url;
-
-	if(!os.plus) {
-		//TODO 先临时这么处理：手机上顶层跳，PC上parent跳
-		if(os.ios || os.android) {
-			window.top.location.href = url;
-		} else {
-			window.parent.location.href = url;
-		}
-		return;
-	}
-	if(!window.plus) {
-		return;
-	}
-
-	let params = options.params || {};
-	let webview = null,
-		webviewCache = null,
-		nShow, nWaiting;
-
-	if(_webviews[id]) {
-		webviewCache = _webviews[id];
-		//webview真实存在，才能获取
-		if(plus.webview.getWebviewById(id)) {
-			webview = webviewCache.webview;
-		}
-	} else if(options.createNew !== true) {
-		webview = plus.webview.getWebviewById(id);
-	}
-
-	if(webview) { //已缓存
-		//每次show都需要传递动画参数；
-		//预加载的动画参数优先级：openWindow配置>preloadPages配置>mui默认配置；
-		nShow = webviewCache ? webviewCache.show : defaultShow;
-		nShow = options.show ? {...nShow, ...options.show} : nShow;
-		nShow.autoShow && webview.show(nShow.aniShow, nShow.duration, function() {
-			_triggerPreload(webview);
-			_trigger(webview, 'pagebeforeshow', false);
-		});
-		if(webviewCache) {
-			webviewCache.afterShowMethodName && webview.evalJS(webviewCache.afterShowMethodName + '(\'' + JSON.stringify(params) + '\')');
-		}
-		return webview;
-	} else { //新窗口
-		if(!url) {
-			throw new Error('webview[' + id + '] does not exist');
-		}
-
-		//显示waiting
-		var waitingConfig = {...WAITING_OPTIONS, ...options.waiting}
-		if(waitingConfig.autoShow) {
-			nWaiting = plus.nativeUI.showWaiting(waitingConfig.title, waitingConfig.options);
-		}
-
-		//创建页面
-		options = {
-			...options,
-			id,
-			url
-		}
-		webview = createWindow(options);
-
-		if(titleConfig) { //处理原生头
-			titleConfig = { ...DEFAULT_OPTIONS.titleConfig, ...titleConfig }
-			var tid = titleConfig.id || (id + "_title");
-			var view = new plus.nativeObj.View(tid, {
-				top: 0,
-				height: titleConfig.height,
-				width: "100%",
-				dock: "top",
-				position: "dock"
-			});
-			view.drawRect(titleConfig.backgroundColor); //绘制背景色
-			var _b = parseInt(titleConfig.height) - 1;
-			view.drawRect(titleConfig.bottomBorderColor, {
-				top: _b + "px",
-				left: "0px"
-			}); //绘制底部边线
-
-			//绘制文字
-			if(titleConfig.title.text){
-				var _title = titleConfig.title;
-				view.drawText(_title.text,_title.position , _title.styles);
-			}
-			
-			//返回图标绘制
-			var _back = titleConfig.back;
-			var backClick = null;
-			//优先字体
-
-			//其次是图片
-			var _backImage = _back.image;
-			if(_backImage.base64Data || _backImage.imgSrc) {
-				//TODO 此处需要处理百分比的情况
-				backClick = {
-					left:parseInt(_backImage.position.left),
-					right:parseInt(_backImage.position.left) + parseInt(_backImage.position.width)
-				};
-				var bitmap = new plus.nativeObj.Bitmap(id + "_back");
-				if(_backImage.base64Data) { //优先base64编码字符串
-					bitmap.loadBase64Data(_backImage.base64Data);
-				} else { //其次加载图片文件
-					bitmap.load(_backImage.imgSrc);
-				}
-				view.drawBitmap(bitmap,_backImage.sprite , _backImage.position);
-			}
-
-			//处理点击事件
-			view.setTouchEventRect({
-				top: "0px",
-				left: "0px",
-				width: "100%",
-				height: "100%"
-			});
-			view.interceptTouchEvent(true);
-			view.addEventListener("click", function(e) {
-				var x = e.clientX;
-				
-				//返回按钮点击
-				if(backClick&& x > backClick.left && x < backClick.right){
-					if( _back.click && _.isFunction(_back.click)){
-						_back.click();
-					}else{
-						webview.evalJS(`window.Vue && Vue.prototype.$back();`);
-						webview.evalJS(`window.mui && mui.back();`);
-					}
-				}
-			}, false);
-			webview.append(view);
-
-		}
-
-		//显示
-		nShow = { SHOW_OPTIONS, ...options.show };
-		if(nShow.autoShow) {
-			//titleUpdate触发时机早于loaded，更换为titleUpdate后，可以更早的显示webview
-			webview.addEventListener(nShow.event, function () {
-				//关闭等待框
-				if(nWaiting) {
-					nWaiting.close();
-				}
-				//显示页面
-				webview.show(nShow.aniShow, nShow.duration, function() {},nShow.extras);
-			}, false);
 		}
 	}
 	return webview;
@@ -608,7 +455,6 @@ const back = function() {
 	var parent = wobj.parent();
 	if (parent) {
 		parent.evalJS('window.Vue && Vue.prototype.$back();');
-		parent.evalJS('window.mui && mui.back();');
 	} else {
 		wobj.canBack(function(e) {
 			//by chb 暂时注释，在碰到类似popover之类的锚点的时候，需多次点击才能返回；
@@ -648,7 +494,6 @@ export default {
 	preloadWindow,
 	createWindow,
 	createWindows,
-	openWindowWithTitle,
 	openWindow,
 	closeOpened,
 	closeAll,
