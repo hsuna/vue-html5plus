@@ -38,6 +38,8 @@ if (process.env.NODE_ENV === 'development') {
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'js/[name].js',
+            library: 'VueHtml5Plus',
+            libraryTarget: 'umd',
             publicPath: '/'
         },
         devServer: {

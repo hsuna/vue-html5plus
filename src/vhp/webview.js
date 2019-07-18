@@ -116,12 +116,12 @@ const fire = (webview, eventType, data) => {
 		if(typeof data === 'undefined') {
 			data = '';
 		} else if(typeof data === 'boolean' || typeof data === 'number') {
-			webview.evalJS(`window.Vue && Vue.prototype.$receive("${eventType}", "${data}");`);
+			webview.evalJS(`window.Vue && window.VueHtml5Plus && Vue.prototype.$receive("${eventType}", "${data}");`);
 			return;
 		} else if(_.isPlainObject(data) || _.isArray()) {
 			data = JSON.stringify(data || {}).replace(/\'/g, "\\u0027").replace(/\\/g, "\\u005c");
 		}
-		webview.evalJS(`window.Vue && Vue.prototype.$receive("${eventType}", "${data}");`);
+		webview.evalJS(`window.Vue && window.VueHtml5Plus && Vue.prototype.$receive("${eventType}", "${data}");`);
 	}
 };
 
@@ -454,7 +454,7 @@ const back = function() {
 	var wobj = plus.webview.currentWebview();
 	var parent = wobj.parent();
 	if (parent) {
-		parent.evalJS('window.Vue && Vue.prototype.$back();');
+		parent.evalJS('window.Vue && window.VueHtml5Plus && Vue.prototype.$back();');
 	} else {
 		wobj.canBack(function(e) {
 			//by chb 暂时注释，在碰到类似popover之类的锚点的时候，需多次点击才能返回；
