@@ -1,13 +1,16 @@
+/** 添加移动事件 */
+import 'tocca'
+
 import evt from './vhp/event'
 import os from './vhp/os'
 import nativeUI from './vhp/nativeUI'
 import geolocation from './vhp/geolocation'
 import networkinfo from './vhp/networkinfo'
-import axios from './vhp/axios'
 import webview from './vhp/webview'
+import axios from './vhp/axios'
+import log from './vhp/log'
 
-/** 添加移动事件 */
-import 'tocca'
+
 
 import _ from './utils'
 
@@ -49,6 +52,7 @@ VueHtml5Plus.install = (Vue) => {
   Vue.prototype.$networkinfo = networkinfo
 
   Vue.prototype.$axios = axios
+  Vue.prototype.$log = log
 
   Object.keys(webview).forEach(v => Vue.prototype[`$${v}`] = webview[v])
 }
