@@ -330,7 +330,7 @@ const openWindow = (url, id, options) => {
 	if(webview) { //已缓存
 		//每次show都需要传递动画参数；
 		//预加载的动画参数优先级：openWindow配置>preloadPages配置>mui默认配置；
-		nShow = webviewCache ? webviewCache.show : defaultShow;
+		nShow = webviewCache ? webviewCache.show : SHOW_OPTIONS;
 		nShow = options.show ? { ...nShow, ...options.show } : nShow;
 		nShow.autoShow && webview.show(nShow.aniShow, nShow.duration, function() {
 			_triggerPreload(webview);
