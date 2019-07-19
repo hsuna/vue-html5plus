@@ -294,7 +294,25 @@ const openWindow = (url, id, options) => {
 	}
 
 	options = options || {};
-	var params = options.params || {};
+	if(options.styles && 'string' === typeof options.styles){
+		options.styles = { 
+			titleNView: { 
+				autoBackButton: false !== options.autoBackButton,
+				titleText: options.styles,
+				titleColor: "#000000", 
+				titleSize: "17px", 
+				backgroundColor: "#fff", 
+				progress: { 
+					color: "#00FF00",
+					height: "2px"      
+				},
+				splitLine: null
+			},
+			popGesture: options.popGesture || "close"
+		}
+	}
+
+	let params = options.params || {};
 	var webview = null,
 		webviewCache = null,
 		nShow, nWaiting;
@@ -360,6 +378,8 @@ const openWindow = (url, id, options) => {
 				_triggerPreload(webview);
 				_trigger(webview, 'pagebeforeshow', false);
 			}, false);
+			/**非VueHtml5Plus环境的页面注入返回方法 */
+			webview.evalJS(`!(window.Vue && window.VueHtml5Plus && window.mui) && window.plus && document.addEventListener('plusready', function(){plus.key.addEventListener('backbutton', plus.webview.currentWebview().close, false);}, false)`)
 		}
 	}
 	return webview;
